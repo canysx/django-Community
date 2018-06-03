@@ -1,0 +1,17 @@
+{% extends 'user_base.html' %}
+{% load  staticfiles %}
+{% block home %}
+    <div class="homeCen_right">
+        <div class="home_self">
+            <img src="{{ MEDIA_URL }}{{ request.user.image }}" alt="用户头像" class="headPic1"/>
+        </div>
+        <!--男性为male，女性为female-->
+        <div class="home_name"><p class="{% if request.user.gender == "man" %}male{% else %}female{% endif %}">{{ request.user.username }}</p></div>
+        <div class="home_msg">
+            <ul>
+                <li>注册时间：{{ request.user.date_joined }}</li>
+                <li>{{ request.user.address }}</li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends 'user_base.html' %}
+{% load staticfiles %}
+{% block custom_css %}
+    <link rel="stylesheet" href="{% static 'css/base.css' %}"/>
+{% endblock %}
+{% block home %}
+    <div class="homeCen_right">
+        <div class="baseHead">
+            <ul>
+                <li><a href="" class="on">我的资料</a></li>
+
+            </ul>
+        </div>
+        <div class="baseCon">
+            <form method="post" id="jsEditUserBtn" action="#">
+                <div class="baseCon_son">
+                    <div class="baseCon_son_left">
+                        昵称
+                    </div>
+                    <div class="baseCon_son_right">
+                        <input type="text" name="nick_name" value="{{ request.user.nick_name }}"/>
+                    </div>
+                </div>
+                <div class="baseCon_son">
+                    <div class="baseCon_son_left">
+                        手机号
+                    </div>
+                    <div class="baseCon_son_right">
+                        <input name="phone" type="text" value="{{ request.user.phone }}"/>
+                    </div>
+                </div>
+                <div class="baseCon_son">
+                    <div class="baseCon_son_left">
+                        常用邮箱
+                    </div>
+                    <div class="baseCon_son_right">
+                        <input name="email" type="text" value="{{ request.user.email }}"/>
+                    </div>
+                </div>
+                <div class="chooseSex">
+                    <p><input name="gender" type="radio" name="sex" {% if request.user.gender == "man" %}checked{% endif %}/><label>男</label></p>
+                    <p><input name="gender" type="radio" name="sex" {% if request.user.gender == "women" %}checked{% endif %}/><label>女</label></p>
+                </div>
+                <input type="submit" value="确认修改" class="upload_sure"/>
+            {% csrf_token %}
+            </form>
+        </div>
+    </div>
+{% endblock %}

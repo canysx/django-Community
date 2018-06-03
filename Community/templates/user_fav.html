@@ -1,0 +1,31 @@
+{% extends 'user_base.html' %}
+{% load staticfiles %}
+{% block custom_css %}
+    <link rel="stylesheet" href="{% static 'css/myWrite.css' %}"/>
+{% endblock %}
+{% block home %}
+    <div class="homeCen_right">
+        <div class="baseHead">
+            <ul>
+                <li><a href="{% url 'user_topic' %}">我的发帖</a></li>
+                <li><a href="" class="on">我收藏的贴</a></li>
+            </ul>
+        </div>
+        <div class="myWrite_con">
+            <div class="writeHead">
+                <div class="writeHead1">帖子标题</div>
+                <div class="writeHead2">发表时间</div>
+                <div class="writeHead3">浏览量</div>
+                <div class="writeHead4">操作</div>
+            </div>
+            {% for favorite in all_fav %}
+            <div class="writeFoot">
+                <div class="writeFoot1"><p><a href="{% url 'topic' favorite.id %}">{{ favorite.title }}</a></p></div>
+                <div class="writeFoot2">{{ favorite.add_time }}</div>
+                <div class="writeFoot3">{{ favorite.click_nums }}</div>
+                <div class="writeFoot4"><a href="{% url 'fav_delete' %}?fav={{ favorite.id }}">取消收藏</a></div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

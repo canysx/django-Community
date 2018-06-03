@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+<!DOCTYPE html>
+{% load staticfiles %}
+    {% block content_left %}
+    <div class="indexMain_left">
+        <div class="indexMain_left_btn">
+            <ul>
+                <li><a href="?type=new"  class="{% if topic_type == "new" or topic_type == "" %}on{% endif %}">最新</a></li>
+                <li><a href="?type=hot" class="{% if topic_type == "hot" %}on{% endif %}">最热</a></li>
+            </ul>
+        </div>
+        <div class="indexMain_left_con">
+            <!--有主题图循环开始-->
+            <div class="indexCon_msg">
+                {% for contents in contacts %}
+                <div class="indexCon_msg_detail">
+                    <a href="{% url 'topic' contents.id %}">
+                        <div class="indexCon_msg_detail_tittle">
+                            <span>竞拍</span>
+                            <p>{{ contents.title }}</p>
+                        </div>
+                    </a>
+                    <div class="havePic">
+                        <a href="{% url "topic" contents.id %}"><div class="havePic_head">
+                            <img src="{{ MEDIA_URL }}{{ contents.image }}"  class="headPic1"/>
+                        </div></a>
+                    </div>
+                    <div class="indexCon_msg_detail_other">
+                        <ul>
+                            <li>{{ contents.user.username }}</li>
+                            <li>{{ contents.add_time }}</li>
+                            <li>{{ contents.click_nums }}</li>
+                            <li>{{ contents.comment_num }}</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="clear"></div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="indexFooter">
+            <div class="indexFooter_con">
+            {% if contacts.has_previous %}
+                <a href="?page={{ contacts.previous_page_number }}"><</a>
+                {% else %}
+                <a href="javascript:"><</a>
+            {% endif %}
+                {% for number in contacts.paginator.page_range %}
+                    {% if number == contacts.number %}
+                    <a href="?page={{ number }}" class="on">{{ number }}</a>
+                    {% else %}
+                    <a href="?page={{ number }}">{{ number }}</a>
+                    {% endif %}
+                {% endfor %}
+            {% if contacts.has_next %}
+                <a href="?page={{ contacts.next_page_number }}">></a>
+                {% else %}
+                <a href="javascript:">></a>
+            {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endblock %}
+    {% block content_rigth %}
+    <div class="indexMain_right">
+        <div class="indexMain_rightCon">
+            <a href="{% url 'write' %}" class="newMsg">发新帖</a>
+                {% if  request.user.is_authenticated %}
+                    <div class="myMsg">
+            <div class="myMsg_con">
+                <a href="{% url 'user_home' %}">
+                <div class="myMsg_conPic"><img src="{{ MEDIA_URL }}{{ request.user.image }}"> </div>
+                <p>{{ request.user.username }}</p>
+                </a>
+            </div>
+            <div  class="myMsg_footer">
+                <ul>
+                    <li><a href="{% url 'user_topic' %}">
+                        <p>主题数</p>
+                        <p>{{ request.user.topic_num }}</p>
+                    </a></li>
+                    <li><a href="{% url 'user_favorite' %}">
+                        <p>收藏数</p>
+                        <p>{{ request.user.fav_num }}</p>
+                    </a></li>
+                    <li><a href="">
+                        <p>注册排名</p>
+                        <p>{{ request.user.id }}</p>
+                    </a></li>
+                </ul>
+            </div>
+        </div>
+                {% else %}
+                    <div class="pwfbCon"></div>
+                {% endif %}
+            <div class="indexPublic">
+                <div class="indexPublic_head">
+                    本周热议
+                </div>
+                <div class="indexPublic_con">
+                    {% for hot in hot_content%}
+                    <ul class="weekHot">
+                        <li><a href="{% url 'topic' hot.id %}">{{ hot.title }}</a><span>{{ hot.click_nums }}</span></li>
+                    </ul>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="indexPublic">
+                <div class="indexPublic_head">
+                    友情链接
+                </div>
+                <div class="indexPublic_con">
+                    {% for url in other_url %}
+                    <ul class="indexLink">
+                        <li><a href="{{ url.url }}">{{ url.name }}</a></li>
+                    </ul>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock %}

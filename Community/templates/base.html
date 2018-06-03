@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>{% block title %}论坛首页{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/reset.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/public.css' %}"/>
+    <link rel="stylesheet" href="{% static  'css/index.css' %}"/>
+    {% block customer_css %}{% endblock %}
+</head>
+<body>
+<header class="ltHead">
+    <div class="ltHead_cen">
+        <a href=""><img src="{% static  'img/canysx.png'%}" alt="" class="headPic1"/></a>
+        <ul class="headNav">
+            <li><a href="{% url 'index' %}">首页</a></li>
+            <li><a href="{% url 'write' %}">发表主题</a></li>
+        </ul>
+        <!--未登入开始-->
+        {% if  request.user.is_authenticated %}
+        <div class="lt_login appear">
+            <ul>
+                 <li><a href="{% url 'user_home' %}">{{ request.user.username }}</a></li>
+                <li><a href="{% url 'logout' %}">退出</a></li>
+            </ul>
+        </div>
+        {% else %}
+        <div class="ltForm appear">
+            <a href=""><img src="{% static 'img/indexForm_bg.png' %}" alt="" class="headPic2"/></a>
+            <ul>
+                <li><a href="{% url 'login' %}">登入</a></li>
+                <li><a href="{% url 'register' %}">注册</a></li>
+            </ul>
+        </div>
+        {% endif %}
+
+    </div>
+</header>
+<div class="indexMain">
+{% block content_left %}
+{% endblock %}
+{% block content_rigth %}
+{% endblock %}
+    <div class="clear"></div>
+</div>
+<footer class="publicFooter">
+    <p>Copyrigh &copy; XXX</p>
+</footer>
+</body>
+</html>
+<script src="{% static 'js/jquery-1.8.3.min.js' %}"></script>
+<script src="{% static 'js/jquery.min.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/jquery-migrate-1.2.1.min.js' %}" type="text/javascript"></script>
+{% block customer_js %}{% endblock %}
+<script>
+    $(".indexMain_left_btn li a").click(function(){
+        $(".indexMain_left_btn li a").removeClass("on");
+        $(this).addClass("on");
+    });
+    window.onscroll=function(){
+        var scrolls=document.body.scrollTop||document.documentElement.scrollTop;
+        var slided=60;
+        if(scrolls>=slided){
+            $(".appear").hide();
+            $(".navFix").show();
+            $(".ltHead").addClass("navTop");
+        }else{
+            $(".appear").show();
+            $(".navFix").hide();
+            $(".ltHead").removeClass("navTop");
+        }
+    };
+</script>

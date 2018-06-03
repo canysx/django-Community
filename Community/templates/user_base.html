@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>我的主页</title>
+    <link rel="stylesheet" href="{% static 'css/reset.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/homeHead.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/homePublic.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/home.css' %}"/>
+    {% block custom_css %}{% endblock %}
+</head>
+<body>
+<header class="zyHead">
+    <div class="zyHead_cen">
+        <a href=""><img src="{% static 'img/canysx.png' %}" alt="" class="headPic1"/></a>
+        <a href="{% url 'index' %}" class="backIndex">返回首页</a>
+        <div class="lt_login">
+            <ul>
+                <li><a href="">{{ request.user.username }}</a></li>
+                <li><a href="{% url 'logout' %}">退出</a></li>
+            </ul>
+        </div>
+        <!-- 登入结束-->
+    </div>
+</header>
+<div class="homeCen">
+    <div class="homeCen_left">
+        <ul>
+            <li {% ifequal home "home" %} class="on"{% endifequal %}><a href="{% url 'user_home' %}">我的主页</a></li>
+            <li {% ifequal info "info" %} class="on"{% endifequal %}><a href="{% url 'user_info' %}">基本设置</a></li>
+            <li {% ifequal topic "topic" %} class="on"{% endifequal %}><a href="{% url 'user_topic' %}">我的贴子</a></li>
+        </ul>
+    </div>
+{% block home %}
+{% endblock %}
+</div>
+{% block custom_js %}{% endblock %}
+</body>
+</html>

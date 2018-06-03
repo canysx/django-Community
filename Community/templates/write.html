@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load  staticfiles %}
+{% block customer_css %}
+    <link rel="stylesheet" href="{% static 'css/write.css' %}"/>
+{% endblock %}
+{% block content_left %}
+<div class="writeCon">
+    <div class="writeCon_head">
+        <p>发新帖</p>
+    </div>
+    <form action="{% url 'write' %}"  method="post" target='frameFile' enctype="multipart/form-data">
+        {% csrf_token %}
+    <div class="writeCon_cen">
+        <div class="writePic">
+            <input type="file" name="image" class="upload_file"/>
+        </div>
+        <div class="writeMsg">
+            <input type="text" name="title" placeholder="请输入标题"/>
+        </div>
+        <div class="writeDown">
+            <textarea class="writeDown" name="content" placeholder="输入内容"></textarea>
+        </div>
+        <input type="submit" class="reform" value="发布"/>
+    </div>
+        <form>
+</div>
+{% endblock %}
+{% block customer_js %}
+    <script src="{% static 'js/jquery-1.8.3.min.js' %}"></script>
+    <script>
+    $('[name="nice-select"]').click(function(e){
+        $('[name="nice-select"]').find('ul').hide();
+        $(this).find('ul').show();
+        e.stopPropagation();
+    });
+    $('[name="nice-select"] li').hover(function(e){
+        $(this).toggleClass('on');
+        e.stopPropagation();
+    });
+    $('[name="nice-select"] li').click(function(e){
+        var val = $(this).text();
+        var dataVal = $(this).attr("data-value");
+        $(this).parents('[name="nice-select"]').find('input').val(val);
+        $('[name="nice-select"] ul').hide();
+        e.stopPropagation();
+    });
+    $(document).click(function(){
+        $('[name="nice-select"] ul').hide();
+    });
+</script>
+{% endblock %}

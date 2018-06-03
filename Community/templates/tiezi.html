@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}正文{% endblock %}
+{% block content_left %}
+    <div class="indexMain_left">
+        <div class="tzCon">
+            <div class="tzCon_head">
+                <div class="tzCon_head_left">
+                    <img src="{{ MEDIA_URL }}{{ contents.image }}"  class="headPic1"/>
+                </div>
+                <div class="tzCon_head_right">
+                    <h1>{{ contents.title }}</h1>
+                    <ul>
+                        <li>{{ contents.user }}</li>
+                        <li>{{ contents.add_time }}</li>
+                        <li>{{ contents.click_nums }}</li>
+                    </ul>
+                </div>
+                <div class="clear"></div>
+            </div>
+            <div class="tzCon_con">
+                {{ contents.content }}
+            </div>
+            <div class="tzCon_foot">
+                <div class="tzCollect">
+                    <div class="tzCollect_left" id="fav_btn">{% if has_fav_topic %}已收藏{% else %}收藏{% endif %}</div>
+                    <div class="tzCollect_right">{{ contents.fav_nums }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="newPending">
+            <div class="newPending_head">
+                <div class="tzHeng"></div>
+                <div class="newPending_head_tittle">最新评论({{ all_comments|length}})</div>
+            </div>
+            <!--楼主可以删除评论、自己可以删除自己的评论删除按钮酌情出现-->
+            {% for comment in all_comments %}
+            <div class="newPending_son">
+                <div class="pendPic">
+                    <img src="{{ MEDIA_URL }}{{ comment.user.image }}" alt="用户头像" class="headPic1"/>
+                </div>
+                <div class="pendDetail">
+                    <div class="pendDetail_head">
+                        <p>{{ comment.user.username }} <span>{{ comment.add_time }}</span></p>
+                        <i>{{ forloop.counter }}楼</i>
+                    </div>
+                    <div class="pendDetail_con">
+                        <p>{{ comment.comments }}</p>
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="writePending">
+            <div class="newPending_head">
+                <div class="tzHeng"></div>
+                <div class="newPending_head_tittle">评论</div>
+            </div>
+            <div class="writePending_con">
+                <input type="text"  id="pl-textarea" placeholder="写下你的评论..."/>
+                <input type="submit" id="pl-submit" value="评论"/>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block content_rigth %}
+    <div class="indexMain_right">
+        <a href="" class="newMsg">发新帖</a>
+    {% if  request.user.is_authenticated %}
+        <div class="myMsg">
+            <div class="myMsg_con">
+                <a href="{% url 'user_home' %}">
+                <div class="myMsg_conPic"><img src="{{ MEDIA_URL }}{{ request.user.image }}"> </div>
+                <p>{{ request.user.username }}</p>
+                </a>
+            </div>
+            <div  class="myMsg_footer">
+                <ul>
+                    <li><a href="{% url 'user_topic' %}">
+                        <p>主题数</p>
+                        <p>{{ request.user.topic_num }}</p>
+                    </a></li>
+                    <li><a href="{% url 'user_favorite' %}">
+                        <p>收藏数</p>
+                        <p>{{ request.user.fav_num }}</p>
+                    </a></li>
+                    <li><a href="">
+                        <p>注册排名</p>
+                        <p>{{ request.user.id }}</p>
+                    </a></li>
+                </ul>
+            </div>
+        </div>
+        {% else %}
+        <div class="pwfbCon"></div>
+    {% endif %}
+        <div class="indexPublic">
+            <div class="indexPublic_head">
+                本周热议
+            </div>
+            <div class="indexPublic_con">
+                <ul class="weekHot">
+                    {% for hot in hot_content %}
+                    <li><a href="{% url 'topic' hot.id %}">{{ hot.title }}</a><span>29</span></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="indexPublic">
+            <div class="indexPublic_head">
+                友情链接
+            </div>
+            <div class="indexPublic_con">
+                <ul class="indexLink">
+                    {% for url in other_url %}
+                    <li><a href="">{{ url.name }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block customer_js %}
+    <script>
+{#        收藏#}
+        function add_fav(current_elem,fav_id){
+            $.ajax({
+                cache: false,
+                type: "POST",
+                url:"{% url 'add_fav' %}",
+                data:{'fav_id':fav_id},
+                async:true,
+                beforeSend:function(xhr, settings){
+                    xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                },
+                success:function(data){
+                    if(data.status == "fail"){
+                        if (data.msg == "用户未登录"){
+                            window.location.href="{% url 'login' %}";
+                        }else{
+                            alert(data.msg);
+                        }
+                    }
+                    else if(data.status == "success"){
+                        current_elem.text(data.msg)
+                    }
+                }
+            });
+        }
+        $('#fav_btn').click(function(){
+            add_fav($(this),{{ contents.id }})
+        });
+
+{#        评论  #}
+        $('#pl-submit').click(function(){
+            var comments = $('#pl-textarea').val();
+            if (comments==""){
+                alert("评论不能为空");
+                return
+            }
+            $.ajax({
+                cache: false,
+                type: "POST",
+                url:"{% url 'add_comment' %}",
+                data:{'topic_id':{{ contents.id }},'comments':comments},
+                async:true,
+                beforeSend:function(xhr, settings){
+                    xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                },
+                success:function(data){
+                    if(data.status == "fail"){
+                        if (data.msg == "用户未登录"){
+                            window.location.href="{% url 'login' %}";
+                        }else{
+                            alert(data.msg);
+                        }
+                    }
+                    else if(data.status == "success"){
+                        alert("评论成功");
+                        window.location.reload();
+                    }
+                },
+                error:function(error){
+                    alert("评论失败")
+                }
+            })
+        })
+    </script>
+{% endblock %}
